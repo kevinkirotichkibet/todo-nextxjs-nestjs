@@ -9,6 +9,8 @@ export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTitle, setNewTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
 
   useEffect(() => {
     fetchTodos();
@@ -53,6 +55,30 @@ export default function Home() {
     fetchTodos();
   }
 
+  function startEdit(todo: Todo) {
+  setEditingId(todo._id);
+  setEditTitle(todo.title);
+}
+
+function cancelEdit() {
+  setEditingId(null);
+  setEditTitle('');
+}
+
+async function saveEdit(id: string) {
+  if (!editTitle.trim()) return;
+
+  await fetch(`${API_URL}/todos/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title: editTitle }),
+  });
+
+  setEditingId(null);
+  setEditTitle('');
+  fetchTodos();
+}
+
   if (loading) return <main className="p-8">Loading...</main>;
 
   return (
@@ -76,30 +102,67 @@ export default function Home() {
       </form>
 
       <ul className="space-y-2">
-        {todos.map((todo) => (
-          <li
-            key={todo._id}
-            className="flex items-center justify-between border rounded px-3 py-2"
+  {todos.map((todo) => (
+    <li
+      key={todo._id}
+      className="flex items-center justify-between border rounded px-3 py-2"
+    >
+      {editingId === todo._id ? (
+        // EDIT MODE
+        <div className="flex items-center gap-2 flex-1">
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveEdit(todo._id);
+              if (e.key === 'Escape') cancelEdit();
+            }}
+            autoFocus
+            className="flex-1 border rounded px-2 py-1"
+          />
+          <button
+            onClick={() => saveEdit(todo._id)}
+            className="text-green-600 text-sm"
           >
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => toggleTodo(todo)}
-              />
-              <span className={todo.completed ? 'line-through text-gray-400' : ''}>
-                {todo.title}
-              </span>
-            </label>
+            Save
+          </button>
+          <button onClick={cancelEdit} className="text-gray-500 text-sm">
+            Cancel
+          </button>
+        </div>
+      ) : (
+        // NORMAL VIEW
+        <>
+          <label className="flex items-center gap-2 flex-1">
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => toggleTodo(todo)}
+            />
+            <span className={todo.completed ? 'line-through text-gray-400' : ''}>
+              {todo.title}
+            </span>
+          </label>
+          <div className="flex gap-3">
+            <button
+              onClick={() => startEdit(todo)}
+              className="text-blue-500 text-sm"
+            >
+              Edit
+            </button>
             <button
               onClick={() => deleteTodo(todo._id)}
               className="text-red-500 text-sm"
             >
               Delete
             </button>
-          </li>
-        ))}
-      </ul>
+          </div>
+        </>
+      )}
+    </li>
+  ))}
+</ul>
     </main>
   );
 }
