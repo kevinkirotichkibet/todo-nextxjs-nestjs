@@ -81,115 +81,122 @@ export default function Home() {
 
   if (loading) {
     return (
-      <main className="max-w-md mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-4">Todo List</h1>
-        <div className="flex gap-2 mb-6">
-          <div className="flex-1 h-10 bg-gray-800 rounded animate-pulse" />
-          <div className="w-16 h-10 bg-gray-800 rounded animate-pulse" />
-        </div>
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-gray-800 rounded animate-pulse" />
-          ))}
+      <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-start justify-center pt-16 px-4">
+        <div className="w-full max-w-md bg-slate-900/70 backdrop-blur border border-slate-800 rounded-2xl shadow-xl p-8">
+          <h1 className="text-2xl font-bold mb-6 text-white">Todo List</h1>
+          <div className="flex gap-2 mb-6">
+            <div className="flex-1 h-11 bg-slate-800 rounded-lg animate-pulse" />
+            <div className="w-16 h-11 bg-slate-800 rounded-lg animate-pulse" />
+          </div>
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-14 bg-slate-800 rounded-lg animate-pulse" />
+            ))}
+          </div>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="max-w-md mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-4">Todo List</h1>
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex items-start justify-center pt-16 px-4">
+      <div className="w-full max-w-md bg-slate-900/70 backdrop-blur border border-slate-800 rounded-2xl shadow-xl p-8">
+        <h1 className="text-2xl font-bold mb-6 text-white">Todo List</h1>
 
-      <form onSubmit={addTodo} className="flex gap-2 mb-6">
-        <input
-          type="text"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="Add a new todo..."
-          className="flex-1 border rounded px-3 py-2"
-        />
-        <button
-          type="submit"
-          className="bg-black text-white px-4 py-2 rounded transition hover:bg-gray-800"
-        >
-          Add
-        </button>
-      </form>
+        <form onSubmit={addTodo} className="flex gap-2 mb-6">
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder="Add a new todo..."
+            className="flex-1 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+          />
+          <button
+            type="submit"
+            className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium transition hover:bg-indigo-500 active:scale-95"
+          >
+            Add
+          </button>
+        </form>
 
-      {todos.length === 0 ? (
-        <div className="text-center text-gray-400 py-8 border rounded">
-          <p className="text-lg">No todos yet</p>
-          <p className="text-sm">Add one above to get started</p>
-        </div>
-      ) : (
-        <ul className="space-y-2">
-          {todos.map((todo) => (
-            <li
-              key={todo._id}
-              className="flex items-center justify-between border rounded px-3 py-2 animate-fade-in"
-            >
-              {editingId === todo._id ? (
-                <div className="flex items-center gap-2 flex-1">
-                  <input
-                    type="text"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveEdit(todo._id);
-                      if (e.key === 'Escape') cancelEdit();
-                    }}
-                    autoFocus
-                    className="flex-1 border rounded px-2 py-1"
-                  />
-                  <button
-                    onClick={() => saveEdit(todo._id)}
-                    className="text-green-500 text-sm transition hover:text-green-400"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={cancelEdit}
-                    className="text-gray-400 text-sm transition hover:text-gray-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <label className="flex items-center gap-2 flex-1">
+        {todos.length === 0 ? (
+          <div className="text-center text-slate-500 py-10 border border-dashed border-slate-700 rounded-lg">
+            <p className="text-base font-medium text-slate-400">No todos yet</p>
+            <p className="text-sm">Add one above to get started</p>
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {todos.map((todo) => (
+              <li
+                key={todo._id}
+                className="flex items-center justify-between bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-3 animate-fade-in"
+              >
+                {editingId === todo._id ? (
+                  <div className="flex items-center gap-2 flex-1">
                     <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={() => toggleTodo(todo)}
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit(todo._id);
+                        if (e.key === 'Escape') cancelEdit();
+                      }}
+                      autoFocus
+                      className="flex-1 bg-slate-900 border border-indigo-500 text-white rounded-md px-2 py-1 outline-none"
                     />
-                    <span
-                      className={
-                        todo.completed ? 'line-through text-gray-400' : ''
-                      }
-                    >
-                      {todo.title}
-                    </span>
-                  </label>
-                  <div className="flex gap-3">
                     <button
-                      onClick={() => startEdit(todo)}
-                      className="text-blue-500 text-sm transition hover:text-blue-400"
+                      onClick={() => saveEdit(todo._id)}
+                      className="text-emerald-400 text-sm font-medium transition hover:text-emerald-300"
                     >
-                      Edit
+                      Save
                     </button>
                     <button
-                      onClick={() => deleteTodo(todo._id)}
-                      className="text-red-500 text-sm transition hover:text-red-400"
+                      onClick={cancelEdit}
+                      className="text-slate-500 text-sm transition hover:text-slate-300"
                     >
-                      Delete
+                      Cancel
                     </button>
                   </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+                ) : (
+                  <>
+                    <label className="flex items-center gap-3 flex-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={() => toggleTodo(todo)}
+                        className="w-4 h-4 accent-indigo-500 cursor-pointer"
+                      />
+                      <span
+                        className={
+                          todo.completed
+                            ? 'line-through text-slate-500'
+                            : 'text-slate-100'
+                        }
+                      >
+                        {todo.title}
+                      </span>
+                    </label>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => startEdit(todo)}
+                        className="text-amber-400 text-sm font-medium px-2 py-1 rounded-md transition hover:bg-amber-400/10"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteTodo(todo._id)}
+                        className="text-red-400 text-sm font-medium px-2 py-1 rounded-md transition hover:bg-red-400/10"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }
